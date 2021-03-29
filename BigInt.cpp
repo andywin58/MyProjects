@@ -300,14 +300,19 @@ void BigInt::subtractSecond(deque<int> &a, const deque<int> &b) const {
         }
         else {
             // Need to borrow.
-            // This could possible leave a 0 front member which
-            // will be dealt with later.
+            // This could possible leave a 0 front member 
+            // which will be dealt with later.
             subtractBorrow(itMore + 1, a.rend());
             *itMore += UPPER + 1;
             *itMore -= *itLess;
         }
         ++itMore;
         ++itLess;
+    }
+    
+    // Remove leading 0's.
+    while(a.front() == 0 && a.size() > 1) {
+        a.pop_front();
     }
 }
 
