@@ -15,7 +15,7 @@ constexpr int UPPER = 999;
 
 class BigInt {
     public:
-    BigInt() : isNegative(false) {}
+    BigInt() : isNegative_(false) {}
     explicit BigInt(long long n);
 
     BigInt operator+(const BigInt & rhs) const;
@@ -42,7 +42,7 @@ class BigInt {
     }
 
     bool operator==(const BigInt & rhs) const {
-        return (isNegative == rhs.isNegative &&
+        return (isNegative_ == rhs.isNegative_ &&
                 deq_ == rhs.deq_ );
     }
     bool operator!=(const BigInt & rhs) const {
@@ -73,14 +73,14 @@ class BigInt {
     int getMultCarry(int &product) const;
     bool isLess(const deque<int> &a, const deque<int> &b) const;
 
-    bool isNegative;
+    bool isNegative_;
     deque<int> deq_;
 };
 
 BigInt::BigInt(long long n) {
-    isNegative = false;
+    this->isNegative_ = false;
     if(n < 0) {
-        isNegative = true;
+        this->isNegative_ = true;
         n *= -1;
     }
 
@@ -93,8 +93,8 @@ BigInt::BigInt(long long n) {
 
 bool BigInt::operator<(const BigInt & rhs) const {
     bool rtn = false;
-    if (isNegative == rhs.isNegative) {
-        if(isNegative) {
+    if (this->isNegative_ == rhs.isNegative_) {
+        if(this->isNegative_) {
             rtn = isLess(rhs.deq_, deq_);
         }
         else {
@@ -102,21 +102,21 @@ bool BigInt::operator<(const BigInt & rhs) const {
         }
     }
     else {
-        rtn = isNegative;
+        rtn = this->isNegative_;
     }
     return rtn;
 }
 
 BigInt BigInt::operator+(const BigInt & rhs) const {
     BigInt rtn;
-    toAddOrNotToAdd(this->isNegative == rhs.isNegative, rtn,
+    toAddOrNotToAdd(this->isNegative_ == rhs.isNegative_, rtn,
                     rhs);
     return rtn;
 }
 
 BigInt BigInt::operator-(const BigInt & rhs) const {
     BigInt rtn;
-    toAddOrNotToAdd(this->isNegative != rhs.isNegative, rtn,
+    toAddOrNotToAdd(this->isNegative_ != rhs.isNegative_, rtn,
                     rhs);
     return rtn;
 }
@@ -145,11 +145,11 @@ BigInt BigInt::operator*(const BigInt & rhs) const {
     }
 
     // Get the sign right
-    if(this->isNegative == rhs.isNegative) {
-        rtn.isNegative = false;
+    if(this->isNegative_ == rhs.isNegative_) {
+        rtn.isNegative_ = false;
     }
     else {
-        rtn.isNegative = true;
+        rtn.isNegative_ = true;
     }
 
     return rtn;
@@ -158,7 +158,7 @@ BigInt BigInt::operator*(const BigInt & rhs) const {
 ostream & operator<<(ostream &os, const BigInt &big) {
     auto it = big.deq_.begin();
     int count = 0;
-    if(big.isNegative) {
+    if(big.isNegative_) {
         os << "-";
     }
 
@@ -185,18 +185,18 @@ ostream & operator<<(ostream &os, const BigInt &big) {
 void BigInt::toAddOrNotToAdd(bool toAdd, BigInt &rtn,
                                          const BigInt &rhs) const {
     if (toAdd) {
-        rtn.isNegative = this->isNegative;
+        rtn.isNegative_ = this->isNegative_;
         addTogther(rtn.deq_, this->deq_, rhs.deq_);
     }
     else {
         // Determine sign of result and which to subtract.
         if(isLess(rhs.deq_, this->deq_)) {
-            rtn.isNegative = this->isNegative;
+            rtn.isNegative_ = this->isNegative_;
             rtn.deq_ = this->deq_;
             subtractSecond(rtn.deq_, rhs.deq_);
         }
         else {
-            rtn.isNegative = rhs.isNegative;
+            rtn.isNegative_ = rhs.isNegative_;
             rtn.deq_ = rhs.deq_;
             subtractSecond(rtn.deq_, this->deq_);
         }
@@ -309,7 +309,7 @@ void BigInt::subtractSecond(deque<int> &a, const deque<int> &b) const {
         ++itMore;
         ++itLess;
     }
-    
+
     // Remove leading 0's.
     while(a.front() == 0 && a.size() > 1) {
         a.pop_front();
@@ -345,6 +345,6 @@ int main()
     cout << "big_a= " << big_a << ", big_b= " << big_b << ", a*b= " << big_a*big_b << endl;
     //cout << big_a << " == " << big_b << (big_a==big_b ? " is true" : " is false") << endl;
     //cout << big_a << " != " << big_b << (big_a!=big_b ? " is true" : " is false") << endl;
-    //cout << big_a << " < " << big_b << (big_a < big_b ? " is true" : " is false") << endl;
+    cout << big_a << " < " << big_b << (big_a < big_b ? " is true" : " is false") << endl;
     return 0;
 }
