@@ -293,14 +293,14 @@ void BigInt::subtractBorrow(deque<int>::reverse_iterator ri,
 void BigInt::subtractSecond(deque<int> &a, const deque<int> &b) const {
     auto itMore = a.rbegin();
     auto itLess = b.rbegin();
-    while (itMore != a.rend() ) { //&& rit != b.rend()) {
+    while (itMore != a.rend() ) {
         if(*itLess <= *itMore) {
             // subtract and move on.
             *itMore -= *itLess;
         }
         else {
             // Need to borrow.
-            // This could possible leave a 0 front member 
+            // This could possible leave a 0 front member
             // which will be dealt with later.
             subtractBorrow(itMore + 1, a.rend());
             *itMore += UPPER + 1;
@@ -340,8 +340,9 @@ int main()
     cin >> a >> b;
     BigInt big_a(a);
     BigInt big_b(b);
-    cout << "big_a= " << big_a << ", big_b= " << big_b << ", a-b=" << big_a-big_b << endl;
-    cout << "big_a= " << big_a << ", big_b= " << big_b << ", a*b=" << big_a*big_b << endl;
+    cout << "big_a= " << big_a << ", big_b= " << big_b << ", a+b= " << big_a+big_b << endl;
+    cout << "big_a= " << big_a << ", big_b= " << big_b << ", a-b= " << big_a-big_b << endl;
+    cout << "big_a= " << big_a << ", big_b= " << big_b << ", a*b= " << big_a*big_b << endl;
     //cout << big_a << " == " << big_b << (big_a==big_b ? " is true" : " is false") << endl;
     //cout << big_a << " != " << big_b << (big_a!=big_b ? " is true" : " is false") << endl;
     //cout << big_a << " < " << big_b << (big_a < big_b ? " is true" : " is false") << endl;
