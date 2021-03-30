@@ -62,8 +62,6 @@ class BigInt {
     friend ostream & operator<<(ostream &os, const BigInt &big);
 
     private:
-    void toAddOrNotToAdd(bool toAdd, BigInt &rtn,
-                                     const BigInt &rhs) const;
     void addTogther(deque<int> &rtn, const deque<int> &a,
                                      const deque<int> &b) const;
     void subtractSecond(deque<int> &a, const deque<int> &b) const;
@@ -109,15 +107,55 @@ bool BigInt::operator<(const BigInt & rhs) const {
 
 BigInt BigInt::operator+(const BigInt & rhs) const {
     BigInt rtn;
-    toAddOrNotToAdd(this->isNegative_ == rhs.isNegative_, rtn,
-                    rhs);
+    if (this->isNegative_ == rhs.isNegative_) {
+        rtn.isNegative_ = this->isNegative_;
+        addTogther(rtn.deq_, this->deq_, rhs.deq_);
+    }
+    else {
+        // Determine sign of result and which to subtract.
+        if(isLess(rhs.deq_, this->deq_)) {
+            rtn.isNegative_ = this->isNegative_;
+            rtn.deq_ = this->deq_;
+            subtractSecond(rtn.deq_, rhs.deq_);
+        }
+        else {
+            rtn.isNegative_ = rhs.isNegative_;
+            rtn.deq_ = rhs.deq_;
+            subtractSecond(rtn.deq_, this->deq_);
+        }
+    }
+
+    // Sign could be wrong for 0.
+    if(rtn.deq_.size() == 1 && rtn.deq_.at(0) == 0) {
+        rtn.isNegative_ = false;
+    }
     return rtn;
 }
 
 BigInt BigInt::operator-(const BigInt & rhs) const {
     BigInt rtn;
-    toAddOrNotToAdd(this->isNegative_ != rhs.isNegative_, rtn,
-                    rhs);
+    if (this->isNegative_ != rhs.isNegative_) {
+        rtn.isNegative_ = this->isNegative_;
+        addTogther(rtn.deq_, this->deq_, rhs.deq_);
+    }
+    else {
+        // Determine sign of result and which to subtract.
+        if(isLess(rhs.deq_, this->deq_)) {
+            rtn.isNegative_ = this->isNegative_;
+            rtn.deq_ = this->deq_;
+            subtractSecond(rtn.deq_, rhs.deq_);
+        }
+        else {
+            rtn.isNegative_ = ! this->isNegative_;
+            rtn.deq_ = rhs.deq_;
+            subtractSecond(rtn.deq_, this->deq_);
+        }
+    }
+
+    // Sign could be wrong for 0.
+    if(rtn.deq_.size() == 1 && rtn.deq_.at(0) == 0) {
+        rtn.isNegative_ = false;
+    }
     return rtn;
 }
 
@@ -152,6 +190,16 @@ BigInt BigInt::operator*(const BigInt & rhs) const {
         rtn.isNegative_ = true;
     }
 
+    // Remove leading 0's.
+    while(rtn.deq_.front() == 0 && rtn.deq_.size() > 1) {
+        rtn.deq_.pop_front();
+    }
+
+    // Sign could be wrong for 0.
+    if(rtn.deq_.size() == 1 && rtn.deq_.at(0) == 0) {
+        rtn.isNegative_ = false;
+    }
+
     return rtn;
 }
 
@@ -180,27 +228,6 @@ ostream & operator<<(ostream &os, const BigInt &big) {
         }
     }
     return os;
-}
-
-void BigInt::toAddOrNotToAdd(bool toAdd, BigInt &rtn,
-                                         const BigInt &rhs) const {
-    if (toAdd) {
-        rtn.isNegative_ = this->isNegative_;
-        addTogther(rtn.deq_, this->deq_, rhs.deq_);
-    }
-    else {
-        // Determine sign of result and which to subtract.
-        if(isLess(rhs.deq_, this->deq_)) {
-            rtn.isNegative_ = this->isNegative_;
-            rtn.deq_ = this->deq_;
-            subtractSecond(rtn.deq_, rhs.deq_);
-        }
-        else {
-            rtn.isNegative_ = rhs.isNegative_;
-            rtn.deq_ = rhs.deq_;
-            subtractSecond(rtn.deq_, this->deq_);
-        }
-    }
 }
 
 bool BigInt::isLess(const deque<int> &a, const deque<int> &b) const {
@@ -300,7 +327,7 @@ void BigInt::subtractSecond(deque<int> &a, const deque<int> &b) const {
         }
         else {
             // Need to borrow.
-            // This could possible leave a 0 front member
+            // This could possibly leave a 0 front member
             // which will be dealt with later.
             subtractBorrow(itMore + 1, a.rend());
             *itMore += UPPER + 1;
