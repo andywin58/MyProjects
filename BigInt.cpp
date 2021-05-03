@@ -2,7 +2,16 @@
 // to anyone wishing to use it for whatever purpose. I wouldn't
 // mind a little credit. I also wouldn't mind corrections and
 // suggestions for improvement.
-// andywin57@gmail.com
+// andywin58@gmail.com
+
+// This is a redo of a college project I did in an undergraduate
+// Data Structures class at Florida International University. I did
+// the original project in Ada (which I still consider to be a cool
+// language) using linked lists of integers each with values of 
+// between 0 and 999. Implement add, subtract and multiply;
+// division was extra credit and I didn't do it.
+// My redo here is in C++14 using deque<int>. Again, I didn't
+// implement division. I will likely come back and do that later.
 
 #include <iostream>
 #include <iomanip>
@@ -11,7 +20,7 @@
 
 using namespace std;
 
-constexpr int UPPER = 999;
+constexpr int UPPER = 9999;
 
 class BigInt {
     public:
