@@ -9,7 +9,9 @@
 // the original project in Ada (which I still consider to be a cool
 // language) using linked lists of integers each with values of 
 // between 0 and 999. Implement add, subtract and multiply;
-// division was extra credit and I didn't do it.
+// division was extra credit and I didn't do it. So this was, in
+// affect, base 1000 arithmetic. I tested by computing 500!. 
+
 // My redo here is in C++14 using deque<int>. Again, I didn't
 // implement division. I will likely come back and do that later.
 
