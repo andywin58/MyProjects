@@ -267,24 +267,8 @@ void NextAction(Action ac, vector<Action> &actv,
 
 int main()
 {
-      // "You are playing a Texas Holdem poker game with two other players in flop street.
-  // There are 3 players in total. Each player can CHECK, BET,  FOLD, CALL (no raises).
-  // For example:
-  // CHECK-CHECK-CHECK
-// CHECK-BET-FOLD-FOLD"
-
-  // 1. check or bet
-  // 2. ch- ch,b # b- f, call
-  // 3.
-  // end. each players either call or fold
-
-      // 2nd part: print out pot size (assume 60 chips starting pot) for each line; bet is 10 chips
-// 3rd part: Print out lines where the game ends AND print out intermediate lines
-// 4th part: add a raise (20 chips) for the
-
     int pot = 60;
-    int inx = 1;  // Not in task description but it makes output easier to
-                  // analyze and critique.
+    int inx = 1;  
     vector<Action> actv;
     cout << "Running Texas Holdem poker game with " << NUM_PLAYERS
          << " players" << endl;
