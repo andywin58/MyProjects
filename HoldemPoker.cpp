@@ -1,3 +1,16 @@
+// Texas Holdem poker game with N players. Each player can CHECK, BET,
+// FOLD, CALL or RAISE.
+// This routine will print all possible permutations of games with the
+// above actions and give the final pot value.
+// Assumptions:
+//      At some point raises will no longer be allowed. 
+//      Initial BETs are 10 chips.
+//      RAISEs are 20 chips.
+//      Players only put chips in the pot when required to do so. 
+
+// This task was deceptively challenging. But the challenge is what
+// made it fun.
+
 #include <iostream>
 #include <string>
 #include <vector>
