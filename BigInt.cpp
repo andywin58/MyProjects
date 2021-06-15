@@ -22,7 +22,9 @@
 
 using namespace std;
 
-constexpr int UPPER = 9999;
+// The setw() in operator<<() is passed the value 3. If UPPER
+// is changed then that needs to change as well.
+constexpr int UPPER = 999;
 
 class BigInt {
     public:
@@ -354,6 +356,16 @@ void BigInt::subtractSecond(deque<int> &a, const deque<int> &b) const {
     }
 }
 
+int BigInt::getMultCarry(int &product) const {
+    int carry = 0;
+    if(product > UPPER) {
+        carry = product / (UPPER + 1);
+        product = product % (UPPER + 1);
+    }
+    return carry;
+}
+
+// I tested this with 500. I need to try some threading to try to improve performanc.
 BigInt factorial(int n) {
     BigInt rtn(n);
     for(int i=n-1; i>1; --i) {
@@ -362,13 +374,19 @@ BigInt factorial(int n) {
     return rtn;
 }
 
-int BigInt::getMultCarry(int &product) const {
-    int carry = 0;
-    if(product > UPPER) {
-        carry = product / (UPPER + 1);
-        product = product % (UPPER + 1);
+// I tested with a sequence of 333. 
+void PrintFibonacciSequence(int n) {
+    BigInt prev(1);
+    BigInt prevprev(0);
+    BigInt theswap(0);
+    cout << 0 << endl;
+    cout << 1 << endl;
+    for(int inx = 1; inx<n; ++inx) {
+        theswap = prev + prevprev;
+        cout << theswap << endl;
+        prevprev = prev;
+        prev = theswap;
     }
-    return carry;
 }
 
 int main()
