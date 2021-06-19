@@ -15,10 +15,13 @@
 // My redo here is in C++14 using deque<int>. Again, I didn't
 // implement division. I will likely come back and do that later.
 
+#include <deque>
 #include <iostream>
 #include <iomanip>
-#include <deque>
-#include <exception>
+#include <thread>
+#include <vector>
+#include <chrono>
+#include <stdexcept>
 
 using namespace std;
 
@@ -365,16 +368,28 @@ int BigInt::getMultCarry(int &product) const {
     return carry;
 }
 
-// I tested this with 500. I need to try some threading to try to improve performanc.
-BigInt factorial(int n) {
-    BigInt rtn(n);
-    for(int i=n-1; i>1; --i) {
+// I copied ThreadPool from
+// https://github.com/progschj/ThreadPool/blob/master/ThreadPool.h
+// and did some multithreaded testing.
+// 500! calculated with 8 threads took around 0.1 second on average.
+// Interestingly if I just partitioned the job into 8 parts and ran them
+// sequentially the time to run all was about the same, i.e. I saw no
+// improvement from multithreading. I wish I could explain why.
+// If I run this function with no partitioning and no multithreading
+// it usually took between 2 and 3 seconds.
+// All testing was done on https://www.onlinegdb.com/online_c++_compiler
+BigInt factorial(int beg, int end) {
+    BigInt rtn(end);
+
+    for(int i=end-1; i>= beg; --i) {
         rtn *= i;
     }
+    cout << "Thread " << this_thread::get_id() << ": Partion " << beg << "->" << end << ":" << endl;
+    cout << rtn << endl;
     return rtn;
 }
 
-// I tested with a sequence of 333. 
+// I tested with a sequence of 333.
 void PrintFibonacciSequence(int n) {
     BigInt prev(1);
     BigInt prevprev(0);
@@ -391,16 +406,48 @@ void PrintFibonacciSequence(int n) {
 
 int main()
 {
-    long long a, b;
-    cout << "Enter 2 big numbers to operate on:" << endl;
-    cin >> a >> b;
-    BigInt big_a(a);
-    BigInt big_b(b);
-    cout << "big_a= " << big_a << ", big_b= " << big_b << ", a+b= " << big_a+big_b << endl;
-    cout << "big_a= " << big_a << ", big_b= " << big_b << ", a-b= " << big_a-big_b << endl;
-    cout << "big_a= " << big_a << ", big_b= " << big_b << ", a*b= " << big_a*big_b << endl;
-    //cout << big_a << " == " << big_b << (big_a==big_b ? " is true" : " is false") << endl;
-    //cout << big_a << " != " << big_b << (big_a!=big_b ? " is true" : " is false") << endl;
-    cout << big_a << " < " << big_b << (big_a < big_b ? " is true" : " is false") << endl;
+    int num_pools = 8;
+ //   ThreadPool pool(num_pools);
+    int factorializeThis = 500;
+//    vector< future<BigInt> > results;
+    int partition = factorializeThis / num_pools;
+    int beg = 1;
+    int end = partition;
+    auto start = chrono::high_resolution_clock::now();
+    BigInt x(1);
+    do {
+        BigInt p = factorial( beg, end);
+        beg = end + 1;
+        end += partition;
+        if(end > factorializeThis)
+            end = factorializeThis;
+        x = x * p;
+    } while(beg<factorializeThis);
+/*
+    do {
+
+        results.emplace_back(
+           pool.enqueue(factorial, beg, end));
+        beg = end + 1;
+        end += partition;
+        if(end > factorializeThis)
+            end = factorializeThis;
+    } while(beg<factorializeThis);
+
+    for(auto && result: results) {
+        BigInt p = result.get();
+        x = x * p;
+    }
+*/
+
+    cout << factorializeThis << "! =" << endl;
+    cout << x;
+    std::cout << std::endl;
+    auto stop = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+
+//    cout << "Multithreaded time to execute was " << duration.count() << " microseconds" << endl;
+    cout << "Single threaded partitioned time to execute was "
+         << duration.count() << " microseconds" << endl;
     return 0;
 }
