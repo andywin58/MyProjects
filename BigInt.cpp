@@ -1,4 +1,4 @@
-// This code was written by Andy Winger and is available
+// This code was written by Andy Winger and is available 
 // to anyone wishing to use it for whatever purpose. I wouldn't
 // mind a little credit. I also wouldn't mind corrections and
 // suggestions for improvement.
